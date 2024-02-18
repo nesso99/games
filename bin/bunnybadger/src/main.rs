@@ -38,8 +38,7 @@ fn main() {
                 ArrowService::check_for_collisions,
                 DudeService::update,
                 BadGuyService::timer,
-            )
-                .chain(),
+            ),
         )
         .run();
 }
@@ -47,7 +46,7 @@ fn main() {
 fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     audio: Res<Audio>,
 ) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
@@ -64,7 +63,7 @@ fn setup(
     let mut dude_service = DudeService::new(&asset_server, &mut commands);
     dude_service.spawn();
     let mut bad_guy_service =
-        BadGuyService::new(&asset_server, &mut commands, &mut texture_atlases);
+        BadGuyService::new(&asset_server, &mut commands, &mut texture_atlas_layouts);
     bad_guy_service.spawn_spawner();
     let mut healthbar_service = HealthBarSevice::new(&asset_server, &mut commands);
     healthbar_service.spawn();

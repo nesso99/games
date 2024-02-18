@@ -37,7 +37,7 @@ impl<'a, 'w, 's> DudeService<'a, 'w, 's> {
     }
 
     pub fn update(
-        keyboard_input: Res<Input<KeyCode>>,
+        keyboard_input: Res<ButtonInput<KeyCode>>,
         mut query: Query<(&mut Dude, &mut Transform)>,
         q_windows: Query<&Window, With<Window>>,
         q_camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
@@ -46,16 +46,16 @@ impl<'a, 'w, 's> DudeService<'a, 'w, 's> {
         let (mut dude, mut dude_transform) = query.single_mut();
         let mut x_direction = 0.0;
         let mut y_direction = 0.0;
-        if keyboard_input.pressed(KeyCode::A) {
+        if keyboard_input.pressed(KeyCode::KeyA) {
             x_direction -= 1.0;
         }
-        if keyboard_input.pressed(KeyCode::D) {
+        if keyboard_input.pressed(KeyCode::KeyD) {
             x_direction += 1.0;
         }
-        if keyboard_input.pressed(KeyCode::W) {
+        if keyboard_input.pressed(KeyCode::KeyW) {
             y_direction += 1.0;
         }
-        if keyboard_input.pressed(KeyCode::S) {
+        if keyboard_input.pressed(KeyCode::KeyS) {
             y_direction -= 1.0;
         }
         let new_x_position =

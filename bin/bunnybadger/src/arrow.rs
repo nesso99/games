@@ -1,4 +1,7 @@
-use bevy::{prelude::*, sprite::collide_aabb::collide};
+use bevy::{
+    math::bounding::{Aabb2d, IntersectsVolume},
+    prelude::*,
+};
 use bevy_kira_audio::prelude::*;
 
 use crate::{
@@ -57,14 +60,14 @@ impl<'a, 'w, 's> ArrowService<'a, 'w, 's> {
     ) {
         for (arrow_entity, arrow_transform) in &arrow_query {
             for (badguy_entity, badguy_transform) in &badguy_query {
-                let collision = collide(
-                    arrow_transform.translation,
-                    SIZE_ARROW,
-                    badguy_transform.translation,
-                    SIZE_BADGUY,
-                );
+                let intersects =
+                    Aabb2d::new(arrow_transform.translation.truncate(), SIZE_ARROW / 2.0)
+                        .intersects(&Aabb2d::new(
+                            badguy_transform.translation.truncate(),
+                            SIZE_BADGUY / 2.0,
+                        ));
 
-                if collision.is_some() {
+                if intersects {
                     commands.entity(arrow_entity).despawn();
                     commands.entity(badguy_entity).despawn();
                     audio
@@ -76,7 +79,7 @@ impl<'a, 'w, 's> ArrowService<'a, 'w, 's> {
     }
 
     pub fn mouse_button_input(
-        buttons: Res<Input<MouseButton>>,
+        buttons: Res<ButtonInput<MouseButton>>,
         query: Query<&mut Dude>,
         mut commands: Commands,
         asset_server: Res<AssetServer>,
