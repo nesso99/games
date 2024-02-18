@@ -1,0 +1,9 @@
+[workspace]
+members = ["bin/bunnybadger", "bin/puzzlepieces"]
+
+resolver = "2"
+
+[workspace.dependencies]
+bevy = { version = "0.12.1", features = ["wav"] }
+bevy_kira_audio = { version = "0.18", features = ["wav"] }
+rand = "0.8.5"
