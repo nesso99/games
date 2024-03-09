@@ -14,6 +14,9 @@ use bunnybadger::{
 };
 
 fn main() {
+    // disable log of bevy_kira_audio
+    std::env::set_var("RUST_LOG", "bevy=info");
+
     App::new()
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
@@ -21,6 +24,10 @@ fn main() {
                     title: "bunnybadger".into(),
                     resolution: (RESOLUTION_WIDTH, RESOLUTION_HEIGHT).into(),
                     resizable: false,
+                    enabled_buttons: bevy::window::EnabledButtons {
+                        maximize: false,
+                        ..Default::default()
+                    },
                     ..default()
                 }),
                 ..default()
@@ -43,28 +50,18 @@ fn main() {
         .run();
 }
 
-fn setup(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-    audio: Res<Audio>,
-) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
 
-    // commands.spawn(AudioBundle {
-    //     source: asset_server.load("audios/enemy.wav"),
-    //     ..default()
-    // });
+    let mut grass_service = GrassSevice::new(&asset_server);
+    grass_service.spawn(&mut commands);
+    let mut castle_service = CastleService::new(&asset_server);
+    castle_service.spawn(&mut commands);
+    let mut dude_service = DudeService::new(&asset_server);
+    dude_service.spawn(&mut commands);
+    let mut bad_guy_service = BadGuyService::new(&asset_server);
+    bad_guy_service.spawn_spawner(&mut commands);
 
-    let mut grass_service = GrassSevice::new(&asset_server, &mut commands);
-    grass_service.spawn();
-    let mut castle_service = CastleService::new(&asset_server, &mut commands);
-    castle_service.spawn();
-    let mut dude_service = DudeService::new(&asset_server, &mut commands);
-    dude_service.spawn();
-    let mut bad_guy_service =
-        BadGuyService::new(&asset_server, &mut commands, &mut texture_atlas_layouts);
-    bad_guy_service.spawn_spawner();
     let mut healthbar_service = HealthBarSevice::new(&asset_server, &mut commands);
     healthbar_service.spawn();
 

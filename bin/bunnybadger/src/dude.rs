@@ -10,23 +10,21 @@ pub struct Dude {
     pub rotation: Quat,
 }
 
-pub struct DudeService<'a, 'w, 's> {
-    texture: Handle<Image>,
-    commands: &'a mut Commands<'w, 's>,
+pub struct DudeService {
+    handle: Handle<Image>,
 }
 
-impl<'a, 'w, 's> DudeService<'a, 'w, 's> {
-    pub fn new(asset_server: &Res<AssetServer>, commands: &'a mut Commands<'w, 's>) -> Self {
+impl DudeService {
+    pub fn new(asset_server: &Res<AssetServer>) -> Self {
         Self {
-            texture: asset_server.load("images/dude.png"),
-            commands,
+            handle: asset_server.load("images/dude.png"),
         }
     }
 
-    pub fn spawn(&mut self) {
-        self.commands.spawn((
+    pub fn spawn(&mut self, commands: &mut Commands) {
+        commands.spawn((
             SpriteBundle {
-                texture: self.texture.clone(),
+                texture: self.handle.clone(),
                 ..default()
             },
             Dude {

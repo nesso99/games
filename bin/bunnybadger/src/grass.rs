@@ -1,32 +1,32 @@
 use bevy::prelude::*;
 
-pub struct GrassSevice<'a, 'w, 's> {
-    width: f32,
-    height: f32,
-    texture: Handle<Image>,
-    commands: &'a mut Commands<'w, 's>,
+use crate::common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH};
+
+pub struct GrassSevice {
+    handle_width: f32,
+    handle_height: f32,
+    handle: Handle<Image>,
 }
 
-impl<'a, 'w, 's> GrassSevice<'a, 'w, 's> {
-    pub fn new(asset_server: &Res<AssetServer>, commands: &'a mut Commands<'w, 's>) -> Self {
+impl GrassSevice {
+    pub fn new(asset_server: &Res<AssetServer>) -> Self {
         Self {
-            width: 100.,
-            height: 100.,
-            texture: asset_server.load("images/grass.png"),
-            commands,
+            handle_width: 100.,
+            handle_height: 100.,
+            handle: asset_server.load("images/grass.png"),
         }
     }
 
-    pub fn spawn(&mut self) {
-        let start_x: f32 = -270.;
-        let start_y: f32 = -190.;
+    pub fn spawn(&mut self, commands: &mut Commands) {
+        let start_x: f32 = -RESOLUTION_WIDTH / 2. + self.handle_width / 2.;
+        let start_y: f32 = -RESOLUTION_HEIGHT / 2. + self.handle_height / 2.;
         for yi in 0..5 {
-            let current_y = start_y + yi as f32 * self.height;
+            let current_y = start_y + yi as f32 * self.handle_height;
             for xi in 0..7 {
-                self.commands.spawn(SpriteBundle {
-                    texture: self.texture.clone(),
+                commands.spawn(SpriteBundle {
+                    texture: self.handle.clone(),
                     transform: Transform::from_xyz(
-                        start_x + xi as f32 * self.width,
+                        start_x + xi as f32 * self.handle_width,
                         current_y,
                         -1.,
                     ),

@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = { workspace = true, features = ["wav"] }
+bevy = { workspace = true }
 bevy_kira_audio = { workspace = true, features = ["wav"] }
 rand = { workspace = true }
