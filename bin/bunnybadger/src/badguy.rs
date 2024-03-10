@@ -44,7 +44,7 @@ impl BadGuyService {
     ) {
         let min_y: i32 = (-RESOLUTION_HEIGHT / 2. + self.handle_height / 2.).floor() as i32;
         let max_y: i32 =
-            min_y + 4 * CastleService::handle_height() as i32 - self.handle_height.floor() as i32;
+            min_y + 4 * CastleService::handle_size().y as i32 - self.handle_height.floor() as i32;
         let y = rand::thread_rng().gen_range(min_y..max_y);
 
         let layout = TextureAtlasLayout::from_grid(Vec2::new(64.0, 29.0), 4, 1, None, None);
@@ -68,7 +68,7 @@ impl BadGuyService {
                 animation_indices,
                 AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),
                 Velocity(Vec2::new(-1., 0.).normalize() * 300.),
-                Lifetime(3.),
+                Lifetime(4.),
             ))
             .insert(BadGuy);
     }

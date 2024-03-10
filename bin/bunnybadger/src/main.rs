@@ -5,7 +5,7 @@ use bunnybadger::{
     badguy::BadGuyService,
     castle::CastleService,
     common::{
-        animate_sprite, apply_lifetime, apply_velocity, MainCamera, RESOLUTION_HEIGHT,
+        apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera, RESOLUTION_HEIGHT,
         RESOLUTION_WIDTH,
     },
     dude::DudeService,
@@ -38,13 +38,14 @@ fn main() {
         .add_systems(
             Update,
             (
-                animate_sprite,
+                apply_animate_sprite,
                 apply_velocity,
                 apply_lifetime,
                 ArrowService::mouse_button_input,
                 ArrowService::check_for_collisions,
                 DudeService::update,
                 BadGuyService::timer,
+                CastleService::check_badguy_collisions,
             ),
         )
         .run();
@@ -61,9 +62,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audi
     dude_service.spawn(&mut commands);
     let mut bad_guy_service = BadGuyService::new(&asset_server);
     bad_guy_service.spawn_spawner(&mut commands);
-
-    let mut healthbar_service = HealthBarSevice::new(&asset_server, &mut commands);
-    healthbar_service.spawn();
+    let mut healthbar_service = HealthBarSevice::new(&asset_server);
+    healthbar_service.spawn(&mut commands);
 
     audio
         .play(asset_server.load("audios/moonlight.wav"))

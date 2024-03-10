@@ -1,6 +1,16 @@
-use bevy::prelude::*;
+use bevy::{
+    math::bounding::{Aabb2d, IntersectsVolume},
+    prelude::*,
+};
+use bevy_kira_audio::prelude::*;
 
-use crate::common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH};
+use crate::{
+    badguy::BadGuy,
+    common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_BADGUY},
+};
+
+#[derive(Component)]
+pub struct Castle;
 
 pub struct CastleService {
     handle_width: f32,
@@ -23,19 +33,53 @@ impl CastleService {
         let start_y: f32 = -RESOLUTION_HEIGHT / 2. + self.handle_height / 2.;
 
         for i in 0..4 {
-            commands.spawn(SpriteBundle {
-                texture: self.handle.clone(),
-                transform: Transform::from_xyz(
-                    start_x,
-                    start_y + i as f32 * self.handle_height,
-                    0.,
-                ),
-                ..default()
-            });
+            commands.spawn((
+                SpriteBundle {
+                    texture: self.handle.clone(),
+                    transform: Transform::from_xyz(
+                        start_x,
+                        start_y + i as f32 * self.handle_height,
+                        0.,
+                    ),
+                    ..default()
+                },
+                Castle,
+            ));
         }
     }
 
-    pub fn handle_height() -> f32 {
-        105.
+    pub fn check_badguy_collisions(
+        mut commands: Commands,
+        castle_query: Query<(Entity, &Transform), With<Castle>>,
+        badguy_query: Query<(Entity, &Transform), With<BadGuy>>,
+        asset_server: Res<AssetServer>,
+        audio: Res<Audio>,
+    ) {
+        for (badguy_entity, badguy_transform) in &badguy_query {
+            for (_, castle_transform) in &castle_query {
+                let intersects = Aabb2d::new(
+                    castle_transform.translation.truncate(),
+                    Self::handle_size() / 2.0,
+                )
+                .intersects(&Aabb2d::new(
+                    badguy_transform.translation.truncate(),
+                    SIZE_BADGUY / 2.0,
+                ));
+
+                if intersects {
+                    commands.entity(badguy_entity).despawn();
+                    audio
+                        .play(asset_server.load("audios/explode.wav"))
+                        .with_volume(0.5);
+
+                    // badguy hit the castle, so we don't need to check for more collisions
+                    break;
+                }
+            }
+        }
+    }
+
+    pub fn handle_size() -> Vec2 {
+        Vec2::new(109., 105.)
     }
 }
