@@ -4,6 +4,6 @@ members = ["bin/bunnybadger", "bin/puzzlepieces"]
 resolver = "2"
 
 [workspace.dependencies]
-bevy = { version = "0.13.0" }
+bevy = { version = "0.13.1" }
 bevy_kira_audio = { version = "0.19" }
 rand = "0.8.5"
