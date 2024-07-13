@@ -13,34 +13,22 @@ use crate::{
 #[derive(Component)]
 pub struct Arrow;
 
-pub struct ArrowService<'a, 'w, 's> {
-    dude: &'a Dude,
-    texture: Handle<Image>,
-    commands: &'a mut Commands<'w, 's>,
-}
+pub struct ArrowService {}
 
-impl<'a, 'w, 's> ArrowService<'a, 'w, 's> {
-    pub fn new(
-        dude: &'a Dude,
-        asset_server: &Res<AssetServer>,
-        commands: &'a mut Commands<'w, 's>,
-    ) -> Self {
-        Self {
-            dude,
-            texture: asset_server.load("images/bullet.png"),
-            commands,
-        }
-    }
+impl ArrowService {
+    const ARROW_PATH: &'static str = "images/bullet.png";
 
-    pub fn spawn(&mut self) {
-        let movement_direction = self.dude.rotation * Vec3::X;
-        self.commands
+    pub fn spawn(commands: &mut Commands, asset_server: &Res<AssetServer>, dude: &Dude) {
+        let texture: Handle<Image> = asset_server.load(Self::ARROW_PATH);
+
+        let movement_direction = dude.rotation * Vec3::X;
+        commands
             .spawn((
                 SpriteBundle {
-                    texture: self.texture.clone(),
+                    texture,
                     transform: Transform {
-                        translation: Vec3::new(self.dude.coords.x, self.dude.coords.y, 0.),
-                        rotation: self.dude.rotation,
+                        translation: Vec3::new(dude.coords.x, dude.coords.y, 0.),
+                        rotation: dude.rotation,
                         ..default()
                     },
                     ..default()
@@ -87,8 +75,7 @@ impl<'a, 'w, 's> ArrowService<'a, 'w, 's> {
     ) {
         if buttons.just_released(MouseButton::Left) {
             let dude = query.single();
-            let mut arrow_service = ArrowService::new(dude, &asset_server, &mut commands);
-            arrow_service.spawn();
+            Self::spawn(&mut commands, &asset_server, dude);
             audio
                 .play(asset_server.load("audios/shoot.wav"))
                 .with_volume(0.5);
