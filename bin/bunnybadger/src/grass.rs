@@ -2,13 +2,13 @@ use bevy::prelude::*;
 
 use crate::common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH};
 
-pub struct GrassSevice {
+pub struct GrassService {
     handle_width: f32,
     handle_height: f32,
     handle: Handle<Image>,
 }
 
-impl GrassSevice {
+impl GrassService {
     pub fn new(asset_server: &Res<AssetServer>) -> Self {
         Self {
             handle_width: 100.,

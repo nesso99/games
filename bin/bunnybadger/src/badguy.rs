@@ -37,6 +37,7 @@ impl BadGuyService {
             });
     }
 
+    // https://github.com/bevyengine/bevy/blob/v0.14.0/examples/2d/sprite_sheet.rs
     pub fn spawn(
         &mut self,
         commands: &mut Commands,
@@ -47,23 +48,23 @@ impl BadGuyService {
             min_y + 4 * CastleService::handle_size().y as i32 - self.handle_height.floor() as i32;
         let y = rand::thread_rng().gen_range(min_y..max_y);
 
-        let layout = TextureAtlasLayout::from_grid(Vec2::new(64.0, 29.0), 4, 1, None, None);
+        let layout = TextureAtlasLayout::from_grid(UVec2::new(64, 29), 4, 1, None, None);
         let texture_atlas_layout = texture_atlas_layouts.add(layout);
         let animation_indices = AnimationIndices { first: 0, last: 3 };
 
         commands
             .spawn((
-                SpriteSheetBundle {
+                SpriteBundle {
                     texture: self.texture_handle.clone(),
-                    atlas: TextureAtlas {
-                        layout: texture_atlas_layout,
-                        index: animation_indices.first,
-                    },
                     transform: Transform {
                         translation: Vec3::new(RESOLUTION_WIDTH / 2., y as f32, 0.),
                         ..default()
                     },
                     ..default()
+                },
+                TextureAtlas {
+                    layout: texture_atlas_layout,
+                    index: animation_indices.first,
                 },
                 animation_indices,
                 AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),

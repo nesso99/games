@@ -28,7 +28,7 @@ fn setup(
     commands.spawn((Camera2dBundle::default(),));
 
     let texture = asset_server.load("images/1.jpg");
-    let layout = TextureAtlasLayout::from_grid(Vec2::new(150.0, 150.0), 3, 3, None, None);
+    let layout = TextureAtlasLayout::from_grid(UVec2::new(150, 150), 3, 3, None, None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
 
     for row in 0..3 {
@@ -49,18 +49,18 @@ fn setup(
             }
 
             commands.spawn((
-                SpriteSheetBundle {
+                SpriteBundle {
                     texture: texture.clone(),
-                    atlas: TextureAtlas {
-                        layout: texture_atlas_layout.clone(),
-                        index: row * 3 + col,
-                    },
                     transform: Transform::from_xyz(
                         -220.0 + col as f32 * 220.0,
                         220.0 - row as f32 * 220.0,
                         0.0,
                     ),
                     ..default()
+                },
+                TextureAtlas {
+                    layout: texture_atlas_layout.clone(),
+                    index: row * 3 + col,
                 },
                 Cell,
             ));

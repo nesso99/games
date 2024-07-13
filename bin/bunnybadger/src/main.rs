@@ -9,8 +9,8 @@ use bunnybadger::{
         RESOLUTION_WIDTH,
     },
     dude::DudeService,
-    grass::GrassSevice,
-    heathbar::HealthBarSevice,
+    grass::GrassService,
+    heathbar::HealthBarService,
 };
 
 fn main() {
@@ -54,7 +54,7 @@ fn main() {
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
 
-    let mut grass_service = GrassSevice::new(&asset_server);
+    let mut grass_service = GrassService::new(&asset_server);
     grass_service.spawn(&mut commands);
     let mut castle_service = CastleService::new(&asset_server);
     castle_service.spawn(&mut commands);
@@ -62,7 +62,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audi
     dude_service.spawn(&mut commands);
     let mut bad_guy_service = BadGuyService::new(&asset_server);
     bad_guy_service.spawn_spawner(&mut commands);
-    let mut healthbar_service = HealthBarSevice::new(&asset_server);
+    let mut healthbar_service = HealthBarService::new(&asset_server);
     healthbar_service.spawn(&mut commands);
 
     audio

@@ -2,12 +2,12 @@ use bevy::prelude::*;
 
 use crate::common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_HEALTH_BAR};
 
-pub struct HealthBarSevice {
+pub struct HealthBarService {
     healthbar_handle: Handle<Image>,
     health_handle: Handle<Image>,
 }
 
-impl HealthBarSevice {
+impl HealthBarService {
     pub fn new(asset_server: &Res<AssetServer>) -> Self {
         Self {
             healthbar_handle: asset_server.load("images/healthbar.png"),
