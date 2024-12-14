@@ -23,10 +23,7 @@ impl DudeService {
 
     pub fn spawn(&mut self, commands: &mut Commands) {
         commands.spawn((
-            SpriteBundle {
-                texture: self.handle.clone(),
-                ..default()
-            },
+            Sprite::from_image(self.handle.clone()),
             Dude {
                 coords: Vec2::default(),
                 rotation: Quat::default(),
@@ -57,24 +54,31 @@ impl DudeService {
             y_direction -= 1.0;
         }
         let new_x_position =
-            dude_transform.translation.x + x_direction * DUDE_SPEED * time.delta_seconds();
+            dude_transform.translation.x + x_direction * DUDE_SPEED * time.delta_secs();
         let new_y_position =
-            dude_transform.translation.y + y_direction * DUDE_SPEED * time.delta_seconds();
+            dude_transform.translation.y + y_direction * DUDE_SPEED * time.delta_secs();
         dude_transform.translation.x = new_x_position.clamp(-320., 320.);
         dude_transform.translation.y = new_y_position.clamp(-240., 240.);
         dude.coords = dude_transform.translation.truncate();
+
+        if q_windows.is_empty() {
+            return;
+        }
 
         let window = q_windows.single();
         let (camera, camera_transform) = q_camera.single();
         if let Some(target) = window
             .cursor_position()
-            .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
+            .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor).ok())
             .map(|ray| ray.origin.truncate())
         {
             let pos = dude_transform.translation.truncate();
             let direction = target - pos;
             let angle = direction.y.atan2(direction.x);
+
+            // update dude
             dude_transform.rotation = Quat::from_rotation_z(angle);
+            // for arrow rotation
             dude.rotation = dude_transform.rotation;
         }
     }

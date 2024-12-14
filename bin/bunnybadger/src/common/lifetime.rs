@@ -9,7 +9,7 @@ pub fn apply_lifetime(
     mut commands: Commands,
 ) {
     for (mut lifetime, entity) in query.iter_mut() {
-        lifetime.0 -= time.delta_seconds();
+        lifetime.0 -= time.delta_secs();
         if lifetime.0 <= 0. {
             commands.entity(entity).despawn();
         }

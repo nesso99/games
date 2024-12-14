@@ -24,13 +24,10 @@ impl ArrowService {
         let movement_direction = dude.rotation * Vec3::X;
         commands
             .spawn((
-                SpriteBundle {
-                    texture,
-                    transform: Transform {
-                        translation: Vec3::new(dude.coords.x, dude.coords.y, 0.),
-                        rotation: dude.rotation,
-                        ..default()
-                    },
+                Sprite::from_image(texture),
+                Transform {
+                    translation: Vec3::new(dude.coords.x, dude.coords.y, 0.),
+                    rotation: dude.rotation,
                     ..default()
                 },
                 Velocity(movement_direction.truncate().normalize() * 500.),

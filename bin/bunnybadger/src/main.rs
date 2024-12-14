@@ -52,7 +52,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
-    commands.spawn((Camera2dBundle::default(), MainCamera));
+    commands.spawn((Camera2d, MainCamera));
 
     let mut grass_service = GrassService::new(&asset_server);
     grass_service.spawn(&mut commands);

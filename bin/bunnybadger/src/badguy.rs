@@ -30,11 +30,9 @@ impl BadGuyService {
     }
 
     pub fn spawn_spawner(&mut self, commands: &mut Commands) {
-        commands
-            .spawn(TransformBundle { ..default() })
-            .insert(BadGuySpawner {
-                timer: Timer::from_seconds(1., TimerMode::Repeating),
-            });
+        commands.spawn(Transform::default()).insert(BadGuySpawner {
+            timer: Timer::from_seconds(1., TimerMode::Repeating),
+        });
     }
 
     // https://github.com/bevyengine/bevy/blob/v0.14.0/examples/2d/sprite_sheet.rs
@@ -54,17 +52,16 @@ impl BadGuyService {
 
         commands
             .spawn((
-                SpriteBundle {
-                    texture: self.texture_handle.clone(),
-                    transform: Transform {
-                        translation: Vec3::new(RESOLUTION_WIDTH / 2., y as f32, 0.),
-                        ..default()
+                Sprite::from_atlas_image(
+                    self.texture_handle.clone(),
+                    TextureAtlas {
+                        layout: texture_atlas_layout,
+                        index: animation_indices.first,
                     },
+                ),
+                Transform {
+                    translation: Vec3::new(RESOLUTION_WIDTH / 2., y as f32, 0.),
                     ..default()
-                },
-                TextureAtlas {
-                    layout: texture_atlas_layout,
-                    index: animation_indices.first,
                 },
                 animation_indices,
                 AnimationTimer(Timer::from_seconds(0.1, TimerMode::Repeating)),

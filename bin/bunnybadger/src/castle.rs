@@ -34,15 +34,8 @@ impl CastleService {
 
         for i in 0..4 {
             commands.spawn((
-                SpriteBundle {
-                    texture: self.handle.clone(),
-                    transform: Transform::from_xyz(
-                        start_x,
-                        start_y + i as f32 * self.handle_height,
-                        0.,
-                    ),
-                    ..default()
-                },
+                Sprite::from_image(self.handle.clone()),
+                Transform::from_xyz(start_x, start_y + i as f32 * self.handle_height, 0.),
                 Castle,
             ));
         }

@@ -23,15 +23,10 @@ impl GrassService {
         for yi in 0..5 {
             let current_y = start_y + yi as f32 * self.handle_height;
             for xi in 0..7 {
-                commands.spawn(SpriteBundle {
-                    texture: self.handle.clone(),
-                    transform: Transform::from_xyz(
-                        start_x + xi as f32 * self.handle_width,
-                        current_y,
-                        -1.,
-                    ),
-                    ..default()
-                });
+                commands.spawn((
+                    Sprite::from_image(self.handle.clone()),
+                    Transform::from_xyz(start_x + xi as f32 * self.handle_width, current_y, -1.),
+                ));
             }
         }
     }
