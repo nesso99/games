@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::MainCamera;
+use crate::{common::MainCamera, resources::GameAssets};
 
 const DUDE_SPEED: f32 = 500.0;
 
@@ -10,20 +10,12 @@ pub struct Dude {
     pub rotation: Quat,
 }
 
-pub struct DudeService {
-    handle: Handle<Image>,
-}
+pub struct DudeService;
 
 impl DudeService {
-    pub fn new(asset_server: &Res<AssetServer>) -> Self {
-        Self {
-            handle: asset_server.load("images/dude.png"),
-        }
-    }
-
-    pub fn spawn(&mut self, commands: &mut Commands) {
+    pub fn spawn(commands: &mut Commands, game_asset: &GameAssets) {
         commands.spawn((
-            Sprite::from_image(self.handle.clone()),
+            Sprite::from_image(game_asset.dude_texture.clone()),
             Dude {
                 coords: Vec2::default(),
                 rotation: Quat::default(),

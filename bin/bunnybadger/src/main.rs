@@ -1,16 +1,8 @@
 use bevy::prelude::*;
 use bevy_kira_audio::prelude::*;
 use bunnybadger::{
-    arrow::ArrowService,
-    badguy::BadGuyService,
-    castle::CastleService,
-    common::{
-        apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera, RESOLUTION_HEIGHT,
-        RESOLUTION_WIDTH,
-    },
-    dude::DudeService,
-    grass::GrassService,
-    heathbar::HealthBarService,
+    common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH},
+    game_plugin::GamePlugin,
 };
 
 fn main() {
@@ -33,39 +25,7 @@ fn main() {
                 ..default()
             }),
             AudioPlugin,
+            GamePlugin,
         ))
-        .add_systems(Startup, setup)
-        .add_systems(
-            Update,
-            (
-                apply_animate_sprite,
-                apply_velocity,
-                apply_lifetime,
-                ArrowService::mouse_button_input,
-                ArrowService::check_for_collisions,
-                DudeService::update,
-                BadGuyService::timer,
-                CastleService::check_badguy_collisions,
-            ),
-        )
         .run();
-}
-
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>, audio: Res<Audio>) {
-    commands.spawn((Camera2d, MainCamera));
-
-    let mut grass_service = GrassService::new(&asset_server);
-    grass_service.spawn(&mut commands);
-    let mut castle_service = CastleService::new(&asset_server);
-    castle_service.spawn(&mut commands);
-    let mut dude_service = DudeService::new(&asset_server);
-    dude_service.spawn(&mut commands);
-    let mut bad_guy_service = BadGuyService::new(&asset_server);
-    bad_guy_service.spawn_spawner(&mut commands);
-    let mut healthbar_service = HealthBarService::new(&asset_server);
-    healthbar_service.spawn(&mut commands);
-
-    audio
-        .play(asset_server.load("audios/moonlight.wav"))
-        .looped();
 }

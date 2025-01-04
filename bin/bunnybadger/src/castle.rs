@@ -7,6 +7,7 @@ use bevy_kira_audio::prelude::*;
 use crate::{
     badguy::BadGuy,
     common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_BADGUY},
+    resources::GameAssets,
 };
 
 #[derive(Component)]
@@ -15,26 +16,24 @@ pub struct Castle;
 pub struct CastleService {
     handle_width: f32,
     handle_height: f32,
-    handle: Handle<Image>,
 }
 
 impl CastleService {
-    pub fn new(asset_server: &Res<AssetServer>) -> Self {
+    pub fn new() -> Self {
         Self {
             handle_width: 109.,
             handle_height: 105.,
-            handle: asset_server.load("images/castle.png"),
         }
     }
 
     /// Spawn the castles, left of the screen
-    pub fn spawn(&mut self, commands: &mut Commands) {
+    pub fn spawn(&mut self, commands: &mut Commands, game_asset: &GameAssets) {
         let start_x: f32 = -RESOLUTION_WIDTH / 2. + self.handle_width / 2.;
         let start_y: f32 = -RESOLUTION_HEIGHT / 2. + self.handle_height / 2.;
 
         for i in 0..4 {
             commands.spawn((
-                Sprite::from_image(self.handle.clone()),
+                Sprite::from_image(game_asset.castle_texture.clone()),
                 Transform::from_xyz(start_x, start_y + i as f32 * self.handle_height, 0.),
                 Castle,
             ));
@@ -45,8 +44,8 @@ impl CastleService {
         mut commands: Commands,
         castle_query: Query<(Entity, &Transform), With<Castle>>,
         badguy_query: Query<(Entity, &Transform), With<BadGuy>>,
-        asset_server: Res<AssetServer>,
         audio: Res<Audio>,
+        game_asset: Res<GameAssets>,
     ) {
         for (badguy_entity, badguy_transform) in &badguy_query {
             for (_, castle_transform) in &castle_query {
@@ -62,7 +61,7 @@ impl CastleService {
                 if intersects {
                     commands.entity(badguy_entity).despawn();
                     audio
-                        .play(asset_server.load("audios/explode.wav"))
+                        .play(game_asset.explode_sound.clone())
                         .with_volume(0.5);
 
                     // badguy hit the castle, so we don't need to check for more collisions

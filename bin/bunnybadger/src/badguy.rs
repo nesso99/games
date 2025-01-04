@@ -6,6 +6,7 @@ use crate::{
     common::{
         AnimationIndices, AnimationTimer, Lifetime, Velocity, RESOLUTION_HEIGHT, RESOLUTION_WIDTH,
     },
+    resources::GameAssets,
 };
 
 #[derive(Component)]
@@ -18,18 +19,14 @@ pub struct BadGuySpawner {
 
 pub struct BadGuyService {
     handle_height: f32,
-    texture_handle: Handle<Image>,
 }
 
 impl BadGuyService {
-    pub fn new(asset_server: &Res<AssetServer>) -> Self {
-        Self {
-            handle_height: 29.,
-            texture_handle: asset_server.load("images/badguy_sheet.png"),
-        }
+    pub fn new() -> Self {
+        Self { handle_height: 29. }
     }
 
-    pub fn spawn_spawner(&mut self, commands: &mut Commands) {
+    pub fn spawn_spawner(commands: &mut Commands) {
         commands.spawn(Transform::default()).insert(BadGuySpawner {
             timer: Timer::from_seconds(1., TimerMode::Repeating),
         });
@@ -40,6 +37,7 @@ impl BadGuyService {
         &mut self,
         commands: &mut Commands,
         texture_atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>,
+        game_assets: &Res<GameAssets>,
     ) {
         let min_y: i32 = (-RESOLUTION_HEIGHT / 2. + self.handle_height / 2.).floor() as i32;
         let max_y: i32 =
@@ -53,7 +51,7 @@ impl BadGuyService {
         commands
             .spawn((
                 Sprite::from_atlas_image(
-                    self.texture_handle.clone(),
+                    game_assets.badguy_texture.clone(),
                     TextureAtlas {
                         layout: texture_atlas_layout,
                         index: animation_indices.first,
@@ -74,15 +72,15 @@ impl BadGuyService {
     pub fn timer(
         mut query: Query<&mut BadGuySpawner>,
         mut commands: Commands,
-        asset_server: Res<AssetServer>,
         time: Res<Time>,
         mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+        game_assets: Res<GameAssets>,
     ) {
         let mut badguy_spawner = query.single_mut();
         badguy_spawner.timer.tick(time.delta());
         if badguy_spawner.timer.just_finished() {
-            let mut badguy_service: BadGuyService = BadGuyService::new(&asset_server);
-            badguy_service.spawn(&mut commands, &mut texture_atlas_layouts);
+            let mut badguy_service: BadGuyService = BadGuyService::new();
+            badguy_service.spawn(&mut commands, &mut texture_atlas_layouts, &game_assets);
         }
     }
 }
