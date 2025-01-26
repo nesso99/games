@@ -50,8 +50,13 @@ impl ArrowService {
                         ));
 
                 if intersects {
-                    commands.entity(arrow_entity).despawn();
-                    commands.entity(badguy_entity).despawn();
+                    if let Some(mut arrow_entity) = commands.get_entity(arrow_entity) {
+                        arrow_entity.despawn();
+                    }
+                    if let Some(mut badguy_entity) = commands.get_entity(badguy_entity) {
+                        badguy_entity.despawn();
+                    }
+
                     audio.play(game_assets.enemy_sound.clone()).with_volume(0.5);
                 }
             }

@@ -10,6 +10,7 @@ use crate::{
     grass::GrassService,
     heathbar::HealthBarService,
     resources::GameAssets,
+    start_screen::GameState,
 };
 
 pub struct GamePlugin;
@@ -17,7 +18,7 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<GameAssets>()
-            .add_systems(Startup, setup)
+            .add_systems(OnEnter(GameState::InGame), setup)
             .add_systems(
                 Update,
                 (
@@ -29,7 +30,8 @@ impl Plugin for GamePlugin {
                     DudeService::update,
                     BadGuyService::timer,
                     CastleService::check_badguy_collisions,
-                ),
+                )
+                    .run_if(in_state(GameState::InGame)),
             );
     }
 }

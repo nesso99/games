@@ -59,7 +59,10 @@ impl CastleService {
                 ));
 
                 if intersects {
-                    commands.entity(badguy_entity).despawn();
+                    if let Some(mut badguy_entity) = commands.get_entity(badguy_entity) {
+                        badguy_entity.despawn();
+                    }
+
                     audio
                         .play(game_asset.explode_sound.clone())
                         .with_volume(0.5);

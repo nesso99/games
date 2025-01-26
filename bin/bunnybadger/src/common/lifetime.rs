@@ -11,7 +11,9 @@ pub fn apply_lifetime(
     for (mut lifetime, entity) in query.iter_mut() {
         lifetime.0 -= time.delta_secs();
         if lifetime.0 <= 0. {
-            commands.entity(entity).despawn();
+            if let Some(mut entity) = commands.get_entity(entity) {
+                entity.despawn();
+            }
         }
     }
 }
