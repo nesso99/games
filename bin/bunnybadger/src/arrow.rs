@@ -14,16 +14,18 @@ use crate::{
 #[derive(Component)]
 pub struct Arrow;
 
-pub struct ArrowService {}
+pub struct ArrowService;
 
 impl ArrowService {
+    pub const SHOOT_COOLDOWN_SECS: f32 = 0.3;
+
     pub fn spawn(commands: &mut Commands, dude: &Dude, game_assets: &Res<GameAssets>) {
         let movement_direction = dude.rotation * Vec3::X;
         commands
             .spawn((
                 Sprite::from_image(game_assets.arrow_texture.clone()),
                 Transform {
-                    translation: Vec3::new(dude.coords.x, dude.coords.y, 0.),
+                    translation: dude.coords.extend(0.),
                     rotation: dude.rotation,
                     ..default()
                 },
@@ -69,11 +71,28 @@ impl ArrowService {
         mut commands: Commands,
         audio: Res<Audio>,
         game_assets: Res<GameAssets>,
+        time: Res<Time>,
+        mut shoot_timer: ResMut<ShootTimer>,
     ) {
-        if buttons.just_released(MouseButton::Left) {
+        shoot_timer.timer.tick(time.delta());
+        if buttons.just_released(MouseButton::Left) && shoot_timer.timer.finished() {
             let dude = query.single();
             Self::spawn(&mut commands, dude, &game_assets);
             audio.play(game_assets.shoot_sound.clone()).with_volume(0.5);
+            shoot_timer.timer.reset();
+        }
+    }
+}
+
+#[derive(Resource)]
+pub struct ShootTimer {
+    timer: Timer,
+}
+
+impl Default for ShootTimer {
+    fn default() -> Self {
+        Self {
+            timer: Timer::from_seconds(ArrowService::SHOOT_COOLDOWN_SECS, TimerMode::Once),
         }
     }
 }

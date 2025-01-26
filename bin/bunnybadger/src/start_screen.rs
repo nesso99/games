@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::common::MainCamera;
+
 #[derive(Component)]
 struct StartButton;
 
@@ -27,11 +29,10 @@ impl Plugin for StartScreenPlugin {
 #[derive(Component)]
 struct StartScreenUI;
 
-#[derive(Component)]
-struct StartScreenCamera;
-
-fn setup_start_screen(mut commands: Commands) {
-    commands.spawn((Camera2d, StartScreenCamera));
+fn setup_start_screen(mut commands: Commands, camera_query: Query<Entity, With<MainCamera>>) {
+    if camera_query.is_empty() {
+        commands.spawn((Camera2d, MainCamera));
+    }
 
     commands
         .spawn((
@@ -95,15 +96,8 @@ fn button_system(
     }
 }
 
-fn cleanup_start_screen(
-    mut commands: Commands,
-    ui_query: Query<Entity, With<StartScreenUI>>,
-    camera_query: Query<Entity, With<StartScreenCamera>>,
-) {
+fn cleanup_start_screen(mut commands: Commands, ui_query: Query<Entity, With<StartScreenUI>>) {
     for entity in &ui_query {
-        commands.entity(entity).despawn_recursive();
-    }
-    for entity in &camera_query {
         commands.entity(entity).despawn_recursive();
     }
 }

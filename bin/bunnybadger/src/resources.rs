@@ -10,6 +10,7 @@ pub struct GameAssets {
     pub badguy_texture: Handle<Image>,
     pub grass_texture: Handle<Image>,
     pub healthbar_texture: Handle<Image>,
+    pub health_texture: Handle<Image>,
 
     // Audio
     pub shoot_sound: Handle<AudioSource>,
@@ -28,6 +29,7 @@ impl GameAssets {
             badguy_texture: asset_server.load("images/badguy_sheet.png"),
             grass_texture: asset_server.load("images/grass.png"),
             healthbar_texture: asset_server.load("images/healthbar.png"),
+            health_texture: asset_server.load("images/health.png"),
 
             // Audio
             shoot_sound: asset_server.load("audios/shoot.wav"),
