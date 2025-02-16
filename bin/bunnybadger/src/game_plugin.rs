@@ -31,6 +31,7 @@ impl Plugin for GamePlugin {
                     DudeService::update,
                     BadGuyService::timer,
                     CastleService::check_badguy_collisions,
+                    HealthBarService::update,
                 )
                     .run_if(in_state(GameState::InGame)),
             );

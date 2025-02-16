@@ -1,7 +1,8 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, render::render_resource::encase::private::Length};
 
 use crate::{
     common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_HEALTH, SIZE_HEALTH_BAR},
+    dude::Dude,
     resources::GameAssets,
 };
 
@@ -32,13 +33,7 @@ impl HealthBarService {
             if point == 0 || point == 199 {
                 continue;
             }
-
             commands.spawn((
-                // Sprite {
-                //     color: Color::srgb(0., 1., 0.),
-                //     custom_size: Some(SIZE_HEALTH),
-                //     ..default()
-                // },
                 Sprite::from_image(game_assets.health_texture.clone()),
                 Transform::from_xyz(
                     health_bar_pos.x - SIZE_HEALTH_BAR.x / 2. + SIZE_HEALTH.x / 2. + point as f32,
@@ -47,6 +42,28 @@ impl HealthBarService {
                 ),
                 HealthPoint,
             ));
+        }
+    }
+
+    pub fn update(
+        dude_query: Query<&Dude>,
+        health_point_query: Query<(Entity, &Transform), With<HealthPoint>>,
+        mut commands: Commands,
+    ) {
+        let dude = dude_query.single();
+
+        // Sort health points by x position to remove them from right to left
+        let mut health_points: Vec<(Entity, &Transform)> = health_point_query.iter().collect();
+        health_points.sort_by(|a, b| b.1.translation.x.partial_cmp(&a.1.translation.x).unwrap());
+
+        let current_health = health_points.length();
+        let points_to_remove = current_health.saturating_sub(dude.health as usize);
+
+        // Remove excess health points
+        for (entity, _) in health_points.iter().take(points_to_remove) {
+            if let Some(mut entity) = commands.get_entity(*entity) {
+                entity.despawn();
+            }
         }
     }
 }

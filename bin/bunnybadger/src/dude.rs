@@ -8,6 +8,7 @@ const DUDE_SPEED: f32 = 500.0;
 pub struct Dude {
     pub coords: Vec2,
     pub rotation: Quat,
+    pub health: u8,
 }
 
 pub struct DudeService;
@@ -19,6 +20,7 @@ impl DudeService {
             Dude {
                 coords: Vec2::default(),
                 rotation: Quat::default(),
+                health: 198,
             },
         ));
     }

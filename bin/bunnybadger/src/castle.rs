@@ -7,6 +7,7 @@ use bevy_kira_audio::prelude::*;
 use crate::{
     badguy::BadGuy,
     common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_BADGUY},
+    dude::Dude,
     resources::GameAssets,
 };
 
@@ -31,10 +32,12 @@ impl CastleService {
         let start_x: f32 = -RESOLUTION_WIDTH / 2. + self.handle_width / 2.;
         let start_y: f32 = -RESOLUTION_HEIGHT / 2. + self.handle_height / 2.;
 
-        for i in 0..4 {
+        let rows = (RESOLUTION_HEIGHT / self.handle_height).ceil() as i32;
+
+        for i in 0..rows {
             commands.spawn((
                 Sprite::from_image(game_asset.castle_texture.clone()),
-                Transform::from_xyz(start_x, start_y + i as f32 * self.handle_height, 0.),
+                Transform::from_xyz(start_x, start_y + i as f32 * self.handle_height, -0.1),
                 Castle,
             ));
         }
@@ -44,9 +47,11 @@ impl CastleService {
         mut commands: Commands,
         castle_query: Query<(Entity, &Transform), With<Castle>>,
         badguy_query: Query<(Entity, &Transform), With<BadGuy>>,
+        mut dude_query: Query<&mut Dude>,
         audio: Res<Audio>,
         game_asset: Res<GameAssets>,
     ) {
+        let mut dude = dude_query.single_mut();
         for (badguy_entity, badguy_transform) in &badguy_query {
             for (_, castle_transform) in &castle_query {
                 let intersects = Aabb2d::new(
@@ -63,6 +68,7 @@ impl CastleService {
                         badguy_entity.despawn();
                     }
 
+                    dude.health = dude.health.saturating_sub(1);
                     audio
                         .play(game_asset.explode_sound.clone())
                         .with_volume(0.5);

@@ -67,7 +67,7 @@ impl ArrowService {
 
     pub fn mouse_button_input(
         buttons: Res<ButtonInput<MouseButton>>,
-        query: Query<&mut Dude>,
+        query: Query<&Dude>,
         mut commands: Commands,
         audio: Res<Audio>,
         game_assets: Res<GameAssets>,
