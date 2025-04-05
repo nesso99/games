@@ -84,3 +84,9 @@ impl BadGuyService {
         }
     }
 }
+
+impl Default for BadGuyService {
+    fn default() -> Self {
+        Self::new()
+    }
+}

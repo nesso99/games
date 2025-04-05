@@ -74,6 +74,7 @@ fn setup_start_screen(mut commands: Commands, camera_query: Query<Entity, With<M
         });
 }
 
+#[allow(clippy::type_complexity)]
 fn button_system(
     mut next_state: ResMut<NextState<GameState>>,
     mut interaction_query: Query<

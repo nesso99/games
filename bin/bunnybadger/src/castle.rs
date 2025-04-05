@@ -84,3 +84,9 @@ impl CastleService {
         Vec2::new(109., 105.)
     }
 }
+
+impl Default for CastleService {
+    fn default() -> Self {
+        Self::new()
+    }
+}

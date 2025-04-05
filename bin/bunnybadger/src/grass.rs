@@ -37,3 +37,9 @@ impl GrassService {
         }
     }
 }
+
+impl Default for GrassService {
+    fn default() -> Self {
+        Self::new()
+    }
+}
