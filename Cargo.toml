@@ -6,4 +6,4 @@ resolver = "2"
 [workspace.dependencies]
 bevy = { version = "0.15" }
 bevy_kira_audio = { version = "0.22" }
-rand = { version = "0.8" }
+rand = { version = "0.9" }
