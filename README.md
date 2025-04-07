@@ -7,3 +7,7 @@ cargo run -p bunnybadger
 cargo run -p puzzlepieces
 ```
 
+# TODO
+
+- [ ] shuffle button
+- [ ] toast when win
