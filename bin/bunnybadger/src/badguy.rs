@@ -42,7 +42,7 @@ impl BadGuyService {
         let min_y: i32 = (-RESOLUTION_HEIGHT / 2. + self.handle_height / 2.).floor() as i32;
         let max_y: i32 =
             min_y + 4 * CastleService::handle_size().y as i32 - self.handle_height.floor() as i32;
-        let y = rand::thread_rng().gen_range(min_y..max_y);
+        let y = rand::rng().random_range(min_y..max_y);
 
         let layout = TextureAtlasLayout::from_grid(UVec2::new(64, 29), 4, 1, None, None);
         let texture_atlas_layout = texture_atlas_layouts.add(layout);
