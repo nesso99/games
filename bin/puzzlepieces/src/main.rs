@@ -1,20 +1,38 @@
 use bevy::prelude::*;
 use puzzlepieces::{
-    board::{Board, Cell, EmptyCell},
-    common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_TILE},
+    board::{spawn_board, Board, BoardState, Cell, EmptyCell, GameState},
+    common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH},
 };
-use rand::{seq::IndexedRandom, Rng};
+use rand::Rng;
 
 // Components for the shuffle button
 #[derive(Component)]
 struct ShuffleButton;
 
-#[derive(Resource)]
-struct GameState {
-    board_state: BoardState,
-    size: usize,
-    current_texture: usize,
-    textures: Vec<(Handle<Image>, Handle<TextureAtlasLayout>)>,
+#[derive(Component)]
+struct WinMessage;
+
+// System to check if the puzzle is solved
+fn check_win_condition(
+    mut game_state: ResMut<GameState>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut win_message_query: Query<&mut Visibility, With<WinMessage>>,
+) {
+    // Only check after a move has been made
+    if keyboard_input.just_released(KeyCode::ArrowUp)
+        || keyboard_input.just_released(KeyCode::ArrowDown)
+        || keyboard_input.just_released(KeyCode::ArrowLeft)
+        || keyboard_input.just_released(KeyCode::ArrowRight)
+    {
+        // Check if the puzzle is solved
+        if game_state.board_state.is_solved() && !game_state.win_message_visible {
+            // Show win message
+            if let Ok(mut visibility) = win_message_query.get_single_mut() {
+                *visibility = Visibility::Visible;
+                game_state.win_message_visible = true;
+            }
+        }
+    }
 }
 
 fn main() {
@@ -29,7 +47,7 @@ fn main() {
             ..default()
         }),))
         .add_systems(Startup, setup)
-        .add_systems(Update, (Board::update, button_system))
+        .add_systems(Update, (Board::update, button_system, check_win_condition))
         .run();
 }
 
@@ -80,7 +98,36 @@ fn setup(
         size: size as usize,
         current_texture,
         textures,
+        win_message_visible: false,
     });
+
+    // Create win message (initially hidden)
+    commands
+        .spawn((
+            Node {
+                width: Val::Px(300.0),
+                height: Val::Px(100.0),
+                position_type: PositionType::Absolute,
+                top: Val::Px(RESOLUTION_HEIGHT / 2.0 - 50.0),
+                left: Val::Px(RESOLUTION_WIDTH / 2.0 - 150.0),
+                justify_content: JustifyContent::Center,
+                align_items: AlignItems::Center,
+                ..default()
+            },
+            BackgroundColor(Color::srgb(0.2, 0.6, 0.2)),
+            Visibility::Hidden,
+            WinMessage,
+        ))
+        .with_children(|parent| {
+            parent.spawn((
+                Text::new("Puzzle Solved!"),
+                TextFont {
+                    font_size: 32.0,
+                    ..Default::default()
+                },
+                TextColor(Color::WHITE),
+            ));
+        });
 
     commands
         .spawn((
@@ -108,147 +155,6 @@ fn setup(
                 TextColor(Color::WHITE),
             ));
         });
-
-    // for row in 0..3 {
-    //     for col in 0..3 {
-    //         let index = row * (size as usize) + col;
-    //         if index == board_state.blank_cell_idx {
-    //             commands.spawn((
-    //                 EmptyCell,
-    //                 Transform::from_xyz(
-    //                     -SIZE_TILE + col as f32 * SIZE_TILE,
-    //                     SIZE_TILE - row as f32 * SIZE_TILE,
-    //                     0.0,
-    //                 ),
-    //             ));
-    //             continue;
-    //         }
-    //
-    //         commands.spawn((
-    //             Sprite {
-    //                 image: texture.clone(),
-    //                 texture_atlas: Some(TextureAtlas {
-    //                     layout: texture_atlas_layout.clone(),
-    //                     index: board_state.state[row * (size as usize) + col],
-    //                 }),
-    //                 custom_size: Some(Vec2::new(218.0, 218.0)),
-    //                 ..Default::default()
-    //             },
-    //             Transform::from_xyz(
-    //                 -SIZE_TILE + col as f32 * SIZE_TILE,
-    //                 SIZE_TILE - row as f32 * SIZE_TILE,
-    //                 0.0,
-    //             ),
-    //             Cell,
-    //         ));
-    //     }
-    // }
-}
-
-pub struct BoardState {
-    pub state: Vec<usize>,
-    pub blank_cell_idx: usize,
-    pub size: usize,
-}
-
-impl BoardState {
-    pub fn new(size: usize) -> Self {
-        let max = size * size;
-        Self {
-            state: (0..max).collect(),
-            blank_cell_idx: max - 1,
-            size,
-        }
-    }
-
-    pub fn move_left(&mut self) {
-        if self.blank_cell_idx % self.size != 0 {
-            self.state
-                .swap(self.blank_cell_idx, self.blank_cell_idx - 1);
-            self.blank_cell_idx -= 1;
-        }
-    }
-
-    pub fn move_right(&mut self) {
-        if self.blank_cell_idx % self.size != self.size - 1 {
-            self.state
-                .swap(self.blank_cell_idx, self.blank_cell_idx + 1);
-            self.blank_cell_idx += 1;
-        }
-    }
-
-    pub fn move_up(&mut self) {
-        if self.blank_cell_idx >= self.size {
-            self.state
-                .swap(self.blank_cell_idx, self.blank_cell_idx - self.size);
-            self.blank_cell_idx -= self.size;
-        }
-    }
-
-    pub fn move_down(&mut self) {
-        if self.blank_cell_idx <= self.size - 3 {
-            self.state
-                .swap(self.blank_cell_idx, self.blank_cell_idx + self.size);
-            self.blank_cell_idx += self.size;
-        }
-    }
-
-    pub fn shuffle(&mut self, times: usize) {
-        for _ in 0..times {
-            let mut rng = rand::rng();
-            let direction = rng.random_range(0..4);
-            match direction {
-                0 => self.move_left(),
-                1 => self.move_right(),
-                2 => self.move_up(),
-                _ => self.move_down(),
-            }
-        }
-    }
-}
-
-// Function to spawn the board
-fn spawn_board(
-    commands: &mut Commands,
-    board_state: &BoardState,
-    size: usize,
-    texture: Handle<Image>,
-    texture_atlas_layout: Handle<TextureAtlasLayout>,
-) {
-    for row in 0..size {
-        for col in 0..size {
-            let index = row * size + col;
-            if index == board_state.blank_cell_idx {
-                commands.spawn((
-                    EmptyCell,
-                    Transform::from_xyz(
-                        -SIZE_TILE + col as f32 * SIZE_TILE,
-                        SIZE_TILE - row as f32 * SIZE_TILE,
-                        0.0,
-                    ),
-                ));
-                continue;
-            }
-
-            commands.spawn((
-                Sprite {
-                    image: texture.clone(),
-                    texture_atlas: Some(TextureAtlas {
-                        layout: texture_atlas_layout.clone(),
-                        index: board_state.state[row * size + col],
-                    }),
-                    custom_size: Some(Vec2::new(218.0, 218.0)),
-                    ..Default::default()
-                },
-                Transform::from_xyz(
-                    -SIZE_TILE + col as f32 * SIZE_TILE,
-                    SIZE_TILE - row as f32 * SIZE_TILE,
-                    0.0,
-                ),
-                Cell,
-            ));
-        }
-    }
 }
 
 // System to handle button interactions
@@ -262,6 +168,7 @@ fn button_system(
     mut game_state: ResMut<GameState>,
     cell_query: Query<Entity, With<Cell>>,
     empty_cell_query: Query<Entity, With<EmptyCell>>,
+    mut win_message_query: Query<&mut Visibility, With<WinMessage>>,
 ) {
     for (interaction, mut color) in &mut interaction_query {
         match *interaction {
@@ -293,6 +200,14 @@ fn button_system(
                     texture,
                     texture_atlas_layout,
                 );
+
+                // Hide win message when shuffling
+                if game_state.win_message_visible {
+                    game_state.win_message_visible = false;
+                    if let Ok(mut visibility) = win_message_query.get_single_mut() {
+                        *visibility = Visibility::Hidden;
+                    }
+                }
             }
             Interaction::Hovered => {
                 // Change button color when hovered

@@ -9,5 +9,4 @@ cargo run -p puzzlepieces
 
 # TODO
 
-- [ ] shuffle button
-- [ ] toast when win
+-[ ] 4x4, 5x5, nxn
