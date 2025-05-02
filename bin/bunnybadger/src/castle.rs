@@ -51,7 +51,7 @@ impl CastleService {
         audio: Res<Audio>,
         game_asset: Res<GameAssets>,
     ) {
-        let mut dude = dude_query.single_mut();
+        let mut dude = dude_query.single_mut().expect("dude is empty");
         for (badguy_entity, badguy_transform) in &badguy_query {
             for (_, castle_transform) in &castle_query {
                 let intersects = Aabb2d::new(
@@ -64,7 +64,7 @@ impl CastleService {
                 ));
 
                 if intersects {
-                    if let Some(mut badguy_entity) = commands.get_entity(badguy_entity) {
+                    if let Ok(mut badguy_entity) = commands.get_entity(badguy_entity) {
                         badguy_entity.despawn();
                     }
 

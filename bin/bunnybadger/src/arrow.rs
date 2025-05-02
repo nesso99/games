@@ -52,10 +52,10 @@ impl ArrowService {
                         ));
 
                 if intersects {
-                    if let Some(mut arrow_entity) = commands.get_entity(arrow_entity) {
+                    if let Ok(mut arrow_entity) = commands.get_entity(arrow_entity) {
                         arrow_entity.despawn();
                     }
-                    if let Some(mut badguy_entity) = commands.get_entity(badguy_entity) {
+                    if let Ok(mut badguy_entity) = commands.get_entity(badguy_entity) {
                         badguy_entity.despawn();
                     }
 
@@ -76,7 +76,7 @@ impl ArrowService {
     ) {
         shoot_timer.timer.tick(time.delta());
         if buttons.just_released(MouseButton::Left) && shoot_timer.timer.finished() {
-            let dude = query.single();
+            let dude = query.single().expect("dude is empty");
             Self::spawn(&mut commands, dude, &game_assets);
             audio.play(game_assets.shoot_sound.clone()).with_volume(0.5);
             shoot_timer.timer.reset();

@@ -50,7 +50,7 @@ impl HealthBarService {
         health_point_query: Query<(Entity, &Transform), With<HealthPoint>>,
         mut commands: Commands,
     ) {
-        let dude = dude_query.single();
+        let dude = dude_query.single().expect("dude is empty");
 
         // Sort health points by x position to remove them from right to left
         let mut health_points: Vec<(Entity, &Transform)> = health_point_query.iter().collect();
@@ -61,7 +61,7 @@ impl HealthBarService {
 
         // Remove excess health points
         for (entity, _) in health_points.iter().take(points_to_remove) {
-            if let Some(mut entity) = commands.get_entity(*entity) {
+            if let Ok(mut entity) = commands.get_entity(*entity) {
                 entity.despawn();
             }
         }

@@ -27,7 +27,7 @@ fn check_win_condition(
         // Check if the puzzle is solved
         if game_state.board_state.is_solved() && !game_state.win_message_visible {
             // Show win message
-            if let Ok(mut visibility) = win_message_query.get_single_mut() {
+            if let Ok(mut visibility) = win_message_query.single_mut() {
                 *visibility = Visibility::Visible;
                 game_state.win_message_visible = true;
             }
@@ -204,7 +204,7 @@ fn button_system(
                 // Hide win message when shuffling
                 if game_state.win_message_visible {
                     game_state.win_message_visible = false;
-                    if let Ok(mut visibility) = win_message_query.get_single_mut() {
+                    if let Ok(mut visibility) = win_message_query.single_mut() {
                         *visibility = Visibility::Hidden;
                     }
                 }

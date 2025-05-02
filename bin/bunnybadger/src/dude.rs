@@ -32,7 +32,8 @@ impl DudeService {
         q_camera: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
         time: Res<Time>,
     ) {
-        let (mut dude, mut dude_transform) = query.single_mut();
+        let (mut dude, mut dude_transform) = query.single_mut().expect("dude is empty");
+
         let mut x_direction = 0.0;
         let mut y_direction = 0.0;
         if keyboard_input.pressed(KeyCode::KeyA) {
@@ -56,11 +57,12 @@ impl DudeService {
         dude.coords = dude_transform.translation.truncate();
 
         if q_windows.is_empty() {
+            print!("q_windows is empty");
             return;
         }
+        let window = q_windows.single().expect("window is empty");
+        let (camera, camera_transform) = q_camera.single().expect("camera is empty");
 
-        let window = q_windows.single();
-        let (camera, camera_transform) = q_camera.single();
         if let Some(target) = window
             .cursor_position()
             .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor).ok())

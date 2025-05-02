@@ -99,6 +99,6 @@ fn button_system(
 
 fn cleanup_start_screen(mut commands: Commands, ui_query: Query<Entity, With<StartScreenUI>>) {
     for entity in &ui_query {
-        commands.entity(entity).despawn_recursive();
+        commands.entity(entity).despawn();
     }
 }
