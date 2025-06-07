@@ -51,7 +51,7 @@ impl CastleService {
         audio: Res<Audio>,
         game_asset: Res<GameAssets>,
     ) {
-        let mut dude = dude_query.single_mut().expect("dude is empty");
+        let mut dude = dude_query.single_mut().unwrap();
         for (badguy_entity, badguy_transform) in &badguy_query {
             for (_, castle_transform) in &castle_query {
                 let intersects = Aabb2d::new(

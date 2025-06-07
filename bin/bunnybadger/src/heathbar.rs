@@ -55,7 +55,7 @@ impl HealthBarService {
         health_point_query: Query<(Entity, &Transform), With<HealthPoint>>,
         mut commands: Commands,
     ) {
-        let dude = dude_query.single().expect("dude is empty");
+        let dude = dude_query.single().unwrap();
 
         // Order health points by x; rightmost points will be removed first (simulate damage from right)
         let mut health_points: Vec<(Entity, &Transform)> = health_point_query.iter().collect();

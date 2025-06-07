@@ -6,5 +6,7 @@ pub mod dude;
 pub mod game_plugin;
 pub mod grass;
 pub mod heathbar;
+pub mod in_game_menu_system;
+pub mod pause_menu;
 pub mod resources;
 pub mod start_screen;

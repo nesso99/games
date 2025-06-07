@@ -1,3 +1,5 @@
+use std::sync::atomic::{AtomicBool, Ordering};
+
 use bevy::prelude::*;
 use bevy_kira_audio::prelude::*;
 
@@ -9,6 +11,7 @@ use crate::{
     dude::DudeService,
     grass::GrassService,
     heathbar::HealthBarService,
+    in_game_menu_system::handle_ingame_menu,
     resources::GameAssets,
     start_screen::GameState,
 };
@@ -32,11 +35,14 @@ impl Plugin for GamePlugin {
                     BadGuyService::timer,
                     CastleService::check_badguy_collisions,
                     HealthBarService::update,
+                    handle_ingame_menu,
                 )
                     .run_if(in_state(GameState::InGame)),
             );
     }
 }
+
+pub static IS_GAME_STARTED: AtomicBool = AtomicBool::new(false);
 
 fn setup(
     mut commands: Commands,
@@ -44,6 +50,10 @@ fn setup(
     audio: Res<Audio>,
     camera_query: Query<Entity, With<MainCamera>>,
 ) {
+    if IS_GAME_STARTED.load(Ordering::Relaxed) {
+        return;
+    }
+
     let game_assets = GameAssets::new(&asset_server);
     commands.insert_resource(game_assets.clone());
 
@@ -60,4 +70,6 @@ fn setup(
     HealthBarService::spawn(&mut commands, &game_assets);
 
     audio.play(game_assets.background_music).looped();
+
+    IS_GAME_STARTED.store(true, Ordering::Relaxed);
 }

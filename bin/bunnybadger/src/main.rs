@@ -3,6 +3,7 @@ use bevy_kira_audio::prelude::*;
 use bunnybadger::{
     common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH},
     game_plugin::GamePlugin,
+    pause_menu::PauseMenuPlugin,
     start_screen::StartScreenPlugin,
 };
 
@@ -28,6 +29,7 @@ fn main() {
             AudioPlugin,
             GamePlugin,
             StartScreenPlugin,
+            PauseMenuPlugin,
         ))
         .run();
 }

@@ -10,6 +10,7 @@ pub enum GameState {
     #[default]
     StartScreen,
     InGame,
+    PauseMenu,
 }
 
 pub struct StartScreenPlugin;

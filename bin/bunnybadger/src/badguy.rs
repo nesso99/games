@@ -76,7 +76,7 @@ impl BadGuyService {
         mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
         game_assets: Res<GameAssets>,
     ) {
-        let mut badguy_spawner = query.single_mut().expect("badguy_spawner is empty");
+        let mut badguy_spawner = query.single_mut().unwrap();
         badguy_spawner.timer.tick(time.delta());
         if badguy_spawner.timer.just_finished() {
             let mut badguy_service: BadGuyService = BadGuyService::new();
