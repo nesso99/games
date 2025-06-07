@@ -68,7 +68,7 @@ impl CastleService {
                         badguy_entity.despawn();
                     }
 
-                    dude.health = dude.health.saturating_sub(1);
+                    dude.health = dude.health.saturating_sub(50);
                     audio
                         .play(game_asset.explode_sound.clone())
                         .with_volume(0.5);
