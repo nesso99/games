@@ -5,9 +5,9 @@ use crate::{
     resources::GameAssets,
 };
 
-pub struct Grass;
+pub struct GrassComponent;
 
-impl Grass {
+impl GrassComponent {
     pub const WIDTH: f32 = 100.0;
     pub const HEIGHT: f32 = 100.0;
 

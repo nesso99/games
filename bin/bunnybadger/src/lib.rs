@@ -1,12 +1,5 @@
-pub mod arrow;
-pub mod badguy;
-pub mod castle;
 pub mod common;
-pub mod dude;
-pub mod game_plugin;
-pub mod grass;
-pub mod heathbar;
-pub mod in_game_menu_system;
-pub mod pause_menu;
+pub mod components;
+pub mod plugins;
 pub mod resources;
-pub mod start_screen;
+pub mod systems;

@@ -5,9 +5,9 @@ use bevy::{
 use bevy_kira_audio::prelude::*;
 
 use crate::{
-    badguy::BadGuy,
     common::{Lifetime, Velocity, SIZE_ARROW, SIZE_BADGUY},
-    dude::Dude,
+    components::badguy::BadGuy,
+    components::dude::Dude,
     resources::GameAssets,
 };
 

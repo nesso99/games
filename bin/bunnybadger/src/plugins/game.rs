@@ -3,18 +3,16 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use bevy::prelude::*;
 use bevy_kira_audio::prelude::*;
 
-use crate::{
-    arrow::{ArrowService, ShootTimer},
-    badguy::BadGuyService,
-    castle::CastleService,
-    common::{apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera},
-    dude::DudeService,
-    grass::Grass,
-    heathbar::HealthBarService,
-    in_game_menu_system::handle_ingame_menu,
-    resources::GameAssets,
-    start_screen::GameState,
-};
+use crate::common::{apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera};
+use crate::components::arrow::{ArrowService, ShootTimer};
+use crate::components::badguy::BadGuyService;
+use crate::components::castle::CastleService;
+use crate::components::dude::DudeService;
+use crate::components::grass::GrassComponent;
+use crate::components::healthbar::HealthBarService;
+use crate::plugins::start_screen::GameState;
+use crate::resources::GameAssets;
+use crate::systems::in_game_menu::handle_ingame_menu;
 
 pub struct GamePlugin;
 
@@ -61,7 +59,7 @@ fn setup(
         commands.spawn((Camera2d, MainCamera));
     }
 
-    Grass::spawn(&mut commands, &game_assets);
+    GrassComponent::spawn(&mut commands, &game_assets);
     let mut castle_service = CastleService::new();
     castle_service.spawn(&mut commands, &game_assets);
     DudeService::spawn(&mut commands, &game_assets);

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{
     common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_HEALTH, SIZE_HEALTH_BAR},
-    dude::Dude,
+    components::dude::Dude,
     resources::GameAssets,
 };
 

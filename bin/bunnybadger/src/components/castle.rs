@@ -5,9 +5,9 @@ use bevy::{
 use bevy_kira_audio::prelude::*;
 
 use crate::{
-    badguy::BadGuy,
+    components::badguy::BadGuy,
     common::{RESOLUTION_HEIGHT, RESOLUTION_WIDTH, SIZE_BADGUY},
-    dude::Dude,
+    components::dude::Dude,
     resources::GameAssets,
 };
 

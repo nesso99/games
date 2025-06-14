@@ -2,10 +2,8 @@ use bevy::prelude::*;
 use rand::Rng;
 
 use crate::{
-    castle::CastleService,
-    common::{
-        AnimationIndices, AnimationTimer, Lifetime, Velocity, RESOLUTION_HEIGHT, RESOLUTION_WIDTH,
-    },
+    components::castle::CastleService,
+    common::{AnimationIndices, AnimationTimer, Lifetime, Velocity, RESOLUTION_HEIGHT, RESOLUTION_WIDTH},
     resources::GameAssets,
 };
 

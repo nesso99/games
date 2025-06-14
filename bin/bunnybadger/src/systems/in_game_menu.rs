@@ -1,4 +1,4 @@
-use crate::start_screen::GameState;
+use crate::plugins::start_screen::GameState;
 use bevy::prelude::*;
 
 /// System to switch to pause menu on ESC

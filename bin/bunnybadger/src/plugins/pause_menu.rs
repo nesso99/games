@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::start_screen::GameState;
+use crate::plugins::start_screen::GameState;
 
 #[derive(Component)]
 struct ResumeButton;
