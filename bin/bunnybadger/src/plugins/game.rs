@@ -5,7 +5,7 @@ use bevy_kira_audio::prelude::*;
 
 use crate::common::{apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera};
 use crate::components::arrow::{ArrowComponent, ShootTimer};
-use crate::components::badguy::BadGuyService;
+use crate::components::badguy::BadGuyComponent;
 use crate::components::castle::CastleService;
 use crate::components::dude::DudeService;
 use crate::components::grass::GrassComponent;
@@ -30,7 +30,7 @@ impl Plugin for GamePlugin {
                     ArrowComponent::mouse_button_input,
                     ArrowComponent::check_for_collisions,
                     DudeService::update,
-                    BadGuyService::timer,
+                    BadGuyComponent::timer,
                     CastleService::check_badguy_collisions,
                     HealthBarService::update,
                     handle_ingame_menu,
@@ -63,7 +63,7 @@ fn setup(
     let mut castle_service = CastleService::new();
     castle_service.spawn(&mut commands, &game_assets);
     DudeService::spawn(&mut commands, &game_assets);
-    BadGuyService::spawn_spawner(&mut commands);
+    BadGuyComponent::spawn_spawner(&mut commands);
     HealthBarService::spawn(&mut commands, &game_assets);
 
     audio.play(game_assets.background_music).looped();

@@ -2,8 +2,10 @@ use bevy::prelude::*;
 use rand::Rng;
 
 use crate::{
+    common::{
+        AnimationIndices, AnimationTimer, Lifetime, Velocity, RESOLUTION_HEIGHT, RESOLUTION_WIDTH,
+    },
     components::castle::CastleService,
-    common::{AnimationIndices, AnimationTimer, Lifetime, Velocity, RESOLUTION_HEIGHT, RESOLUTION_WIDTH},
     resources::GameAssets,
 };
 
@@ -15,14 +17,10 @@ pub struct BadGuySpawner {
     pub timer: Timer,
 }
 
-pub struct BadGuyService {
-    handle_height: f32,
-}
+pub struct BadGuyComponent;
 
-impl BadGuyService {
-    pub fn new() -> Self {
-        Self { handle_height: 29. }
-    }
+impl BadGuyComponent {
+    pub const HEIGHT: f32 = 29.0;
 
     pub fn spawn_spawner(commands: &mut Commands) {
         commands.spawn(Transform::default()).insert(BadGuySpawner {
@@ -32,14 +30,13 @@ impl BadGuyService {
 
     // https://github.com/bevyengine/bevy/blob/v0.14.0/examples/2d/sprite_sheet.rs
     pub fn spawn(
-        &mut self,
         commands: &mut Commands,
         texture_atlas_layouts: &mut ResMut<Assets<TextureAtlasLayout>>,
         game_assets: &Res<GameAssets>,
     ) {
-        let min_y: i32 = (-RESOLUTION_HEIGHT / 2. + self.handle_height / 2.).floor() as i32;
+        let min_y: i32 = (-RESOLUTION_HEIGHT / 2. + Self::HEIGHT / 2.).floor() as i32;
         let max_y: i32 =
-            min_y + 4 * CastleService::handle_size().y as i32 - self.handle_height.floor() as i32;
+            min_y + 4 * CastleService::handle_size().y as i32 - Self::HEIGHT.floor() as i32;
         let y = rand::rng().random_range(min_y..max_y);
 
         let layout = TextureAtlasLayout::from_grid(UVec2::new(64, 29), 4, 1, None, None);
@@ -77,14 +74,7 @@ impl BadGuyService {
         let mut badguy_spawner = query.single_mut().unwrap();
         badguy_spawner.timer.tick(time.delta());
         if badguy_spawner.timer.just_finished() {
-            let mut badguy_service: BadGuyService = BadGuyService::new();
-            badguy_service.spawn(&mut commands, &mut texture_atlas_layouts, &game_assets);
+            Self::spawn(&mut commands, &mut texture_atlas_layouts, &game_assets);
         }
-    }
-}
-
-impl Default for BadGuyService {
-    fn default() -> Self {
-        Self::new()
     }
 }
