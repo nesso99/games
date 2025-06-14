@@ -4,7 +4,7 @@ use bevy::prelude::*;
 use bevy_kira_audio::prelude::*;
 
 use crate::common::{apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera};
-use crate::components::arrow::{ArrowService, ShootTimer};
+use crate::components::arrow::{ArrowComponent, ShootTimer};
 use crate::components::badguy::BadGuyService;
 use crate::components::castle::CastleService;
 use crate::components::dude::DudeService;
@@ -27,8 +27,8 @@ impl Plugin for GamePlugin {
                     apply_animate_sprite,
                     apply_velocity,
                     apply_lifetime,
-                    ArrowService::mouse_button_input,
-                    ArrowService::check_for_collisions,
+                    ArrowComponent::mouse_button_input,
+                    ArrowComponent::check_for_collisions,
                     DudeService::update,
                     BadGuyService::timer,
                     CastleService::check_badguy_collisions,

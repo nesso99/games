@@ -11,15 +11,18 @@ use crate::{
     resources::GameAssets,
 };
 
+/// Marker component for arrows shot by the player.
 #[derive(Component)]
 pub struct Arrow;
 
-pub struct ArrowService;
+/// Systems for spawning arrows, handling input, and detecting collisions.
+pub struct ArrowComponent;
 
-impl ArrowService {
+impl ArrowComponent {
     pub const SHOOT_COOLDOWN_SECS: f32 = 0.3;
 
-    pub fn spawn(commands: &mut Commands, dude: &Dude, game_assets: &Res<GameAssets>) {
+    /// Spawns a new arrow at the `dude`'s position and orientation.
+    pub fn spawn(commands: &mut Commands, dude: &Dude, game_assets: &GameAssets) {
         let movement_direction = dude.rotation * Vec3::X;
         commands.spawn((
             Sprite::from_image(game_assets.arrow_texture.clone()),
@@ -42,9 +45,10 @@ impl ArrowService {
         game_assets: Res<GameAssets>,
     ) {
         // For better performance with many objects, consider spatial partitioning.
-        for (arrow_entity, arrow_transform) in &arrow_query {
+        // Check each arrow against each bad guy for collisions.
+        for (arrow_entity, arrow_transform) in arrow_query.iter() {
             let arrow_aabb = Aabb2d::new(arrow_transform.translation.truncate(), SIZE_ARROW / 2.0);
-            for (badguy_entity, badguy_transform) in &badguy_query {
+            for (badguy_entity, badguy_transform) in badguy_query.iter() {
                 let badguy_aabb =
                     Aabb2d::new(badguy_transform.translation.truncate(), SIZE_BADGUY / 2.0);
                 if arrow_aabb.intersects(&badguy_aabb) {
@@ -60,6 +64,7 @@ impl ArrowService {
         }
     }
 
+    /// Handles shooting input with left mouse button and enforces cooldown.
     pub fn mouse_button_input(
         buttons: Res<ButtonInput<MouseButton>>,
         query: Query<&Dude>,
@@ -82,6 +87,7 @@ impl ArrowService {
     }
 }
 
+/// Timer resource for controlling arrow shooting cooldown.
 #[derive(Resource)]
 pub struct ShootTimer {
     timer: Timer,
@@ -90,7 +96,7 @@ pub struct ShootTimer {
 impl Default for ShootTimer {
     fn default() -> Self {
         Self {
-            timer: Timer::from_seconds(ArrowService::SHOOT_COOLDOWN_SECS, TimerMode::Once),
+            timer: Timer::from_seconds(ArrowComponent::SHOOT_COOLDOWN_SECS, TimerMode::Once),
         }
     }
 }
