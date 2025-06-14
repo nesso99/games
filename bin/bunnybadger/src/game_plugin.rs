@@ -9,7 +9,7 @@ use crate::{
     castle::CastleService,
     common::{apply_animate_sprite, apply_lifetime, apply_velocity, MainCamera},
     dude::DudeService,
-    grass::GrassService,
+    grass::Grass,
     heathbar::HealthBarService,
     in_game_menu_system::handle_ingame_menu,
     resources::GameAssets,
@@ -61,8 +61,7 @@ fn setup(
         commands.spawn((Camera2d, MainCamera));
     }
 
-    let mut grass_service = GrassService::new();
-    grass_service.spawn(&mut commands, &game_assets);
+    Grass::spawn(&mut commands, &game_assets);
     let mut castle_service = CastleService::new();
     castle_service.spawn(&mut commands, &game_assets);
     DudeService::spawn(&mut commands, &game_assets);

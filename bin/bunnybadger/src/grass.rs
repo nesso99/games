@@ -5,41 +5,28 @@ use crate::{
     resources::GameAssets,
 };
 
-pub struct GrassService {
-    handle_width: f32,
-    handle_height: f32,
-}
+pub struct Grass;
 
-impl GrassService {
-    pub fn new() -> Self {
-        Self {
-            handle_width: 100.,
-            handle_height: 100.,
-        }
-    }
+impl Grass {
+    pub const WIDTH: f32 = 100.0;
+    pub const HEIGHT: f32 = 100.0;
 
-    pub fn spawn(&mut self, commands: &mut Commands, game_assets: &GameAssets) {
-        let start_x: f32 = -RESOLUTION_WIDTH / 2. + self.handle_width / 2.;
-        let start_y: f32 = -RESOLUTION_HEIGHT / 2. + self.handle_height / 2.;
+    pub fn spawn(commands: &mut Commands, game_assets: &GameAssets) {
+        let start_x = -RESOLUTION_WIDTH / 2.0 + Self::WIDTH / 2.0;
+        let start_y = -RESOLUTION_HEIGHT / 2.0 + Self::HEIGHT / 2.0;
 
-        // Calculate number of rows and columns needed to fill screen
-        let columns = (RESOLUTION_WIDTH / self.handle_width).ceil() as i32;
-        let rows = (RESOLUTION_HEIGHT / self.handle_height).ceil() as i32;
+        let columns = (RESOLUTION_WIDTH / Self::WIDTH).ceil() as i32;
+        let rows = (RESOLUTION_HEIGHT / Self::HEIGHT).ceil() as i32;
 
         for yi in 0..rows {
-            let current_y = start_y + yi as f32 * self.handle_height;
+            let y = start_y + yi as f32 * Self::HEIGHT;
             for xi in 0..columns {
+                let x = start_x + xi as f32 * Self::WIDTH;
                 commands.spawn((
                     Sprite::from_image(game_assets.grass_texture.clone()),
-                    Transform::from_xyz(start_x + xi as f32 * self.handle_width, current_y, -1.),
+                    Transform::from_xyz(x, y, -1.0),
                 ));
             }
         }
-    }
-}
-
-impl Default for GrassService {
-    fn default() -> Self {
-        Self::new()
     }
 }
